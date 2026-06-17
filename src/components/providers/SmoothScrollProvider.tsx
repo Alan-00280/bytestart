@@ -49,7 +49,7 @@ export default function SmoothScrollProvider({ children }: SmoothScrollProviderP
         const targetElement = document.querySelector(anchor.hash);
         if (targetElement) {
           e.preventDefault();
-          lenis.scrollTo(targetElement);
+          lenis.scrollTo(targetElement as HTMLElement);
         }
       }
     };
