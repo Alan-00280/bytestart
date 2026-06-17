@@ -610,19 +610,21 @@ export default function CoursePlayerPage({ params }: PageProps) {
     <div className="bg-slate-950 min-h-screen lg:h-screen lg:overflow-hidden text-white antialiased flex flex-col font-sans selection:bg-[#A156E3]/30">
       
       {/* GLOBAL NAVBAR */}
-      <Navbar
-        currentRole={currentRole}
-        onRoleChange={handleRoleChange}
-        onShowToast={showToast}
-      />
+      {!isFullscreen && (
+        <Navbar
+          currentRole={currentRole}
+          onRoleChange={handleRoleChange}
+          onShowToast={showToast}
+        />
+      )}
 
       {/* VIEWPORT CONTROLLER WRAPPER (Split 2-Column Desktop View) */}
-      <div className="flex flex-col lg:flex-row w-full lg:min-h-0 lg:h-[calc(100vh-76px)] bg-slate-950 relative z-10">
+      <div className={`flex flex-col lg:flex-row w-full lg:min-h-0 ${isFullscreen ? "lg:h-screen" : "lg:h-[calc(100vh-76px)]"} bg-slate-950 relative z-10`}>
         
         {/* KOLOM KIRI: Main Learning Content Area (Lebar: ~70%) */}
         <div 
           data-lenis-prevent
-          className={`w-full ${isFullscreen ? "lg:w-full" : "lg:w-[70%]"} lg:h-[calc(100vh-76px)] lg:overflow-y-auto flex flex-col bg-slate-950 no-scrollbar`}
+          className={`w-full ${isFullscreen ? "lg:w-full lg:h-screen" : "lg:w-[70%] lg:h-[calc(100vh-76px)]"} lg:overflow-y-auto flex flex-col bg-slate-950 no-scrollbar`}
         >
           
           {/* Breadcrumb Navigation on top of Video (Desktop Only) */}
@@ -666,6 +668,7 @@ export default function CoursePlayerPage({ params }: PageProps) {
             <div className="flex overflow-x-auto no-scrollbar gap-6 text-sm font-semibold text-slate-400 py-2" style={{ scrollbarWidth: "none" }}>
               {[
                 { id: "overview", name: "Overview" },
+                { id: "content", name: "Course Content", className: "lg:hidden" },
                 { id: "qa", name: "Q&A" },
                 { id: "notes", name: "Notes" },
                 { id: "announcements", name: "Announcements" },
@@ -677,7 +680,7 @@ export default function CoursePlayerPage({ params }: PageProps) {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`cursor-pointer pb-1.5 border-b-2 font-poppins transition-all outline-none whitespace-nowrap ${
+                    className={`cursor-pointer pb-1.5 border-b-2 font-poppins transition-all outline-none whitespace-nowrap ${tab.className || ""} ${
                       isActive 
                         ? "border-[#892CDC] text-white font-bold" 
                         : "border-transparent hover:text-slate-200"
@@ -703,6 +706,27 @@ export default function CoursePlayerPage({ params }: PageProps) {
                 setShowFullDescription={setShowFullDescription}
                 showToast={showToast}
               />
+            )}
+
+            {activeTab === "content" && (
+              <div className="lg:hidden">
+                <PlaylistSidebar
+                  syllabus={syllabus}
+                  completedLessons={completedLessons}
+                  flatVideosList={flatVideosList}
+                  activeVideoId={activeVideoId}
+                  courseCompletionRate={courseCompletionRate}
+                  expandedSections={expandedSections}
+                  openResourcesId={openResourcesId}
+                  onToggleSection={toggleSection}
+                  onVideoSelect={handleVideoSelect}
+                  onCompleteLesson={handleCompleteLesson}
+                  onOpenResourcesToggle={(vidId) => setOpenResourcesId(openResourcesId === vidId ? null : vidId)}
+                  getResourcesForVideo={getResourcesForVideo}
+                  showToast={showToast}
+                  onClosePlayer={() => router.push("/dashboard/my-learning")}
+                />
+              </div>
             )}
 
             {activeTab === "qa" && (
@@ -759,22 +783,24 @@ export default function CoursePlayerPage({ params }: PageProps) {
 
         {/* KOLOM KANAN: Course Content & Playlist Sidebar (Lebar: ~30% Desktop) */}
         {!isFullscreen && (
-          <PlaylistSidebar
-            syllabus={syllabus}
-            completedLessons={completedLessons}
-            flatVideosList={flatVideosList}
-            activeVideoId={activeVideoId}
-            courseCompletionRate={courseCompletionRate}
-            expandedSections={expandedSections}
-            openResourcesId={openResourcesId}
-            onToggleSection={toggleSection}
-            onVideoSelect={handleVideoSelect}
-            onCompleteLesson={handleCompleteLesson}
-            onOpenResourcesToggle={(vidId) => setOpenResourcesId(openResourcesId === vidId ? null : vidId)}
-            getResourcesForVideo={getResourcesForVideo}
-            showToast={showToast}
-            onClosePlayer={() => router.push("/dashboard/my-learning")}
-          />
+          <div className="hidden lg:block lg:w-[30%] shrink-0">
+            <PlaylistSidebar
+              syllabus={syllabus}
+              completedLessons={completedLessons}
+              flatVideosList={flatVideosList}
+              activeVideoId={activeVideoId}
+              courseCompletionRate={courseCompletionRate}
+              expandedSections={expandedSections}
+              openResourcesId={openResourcesId}
+              onToggleSection={toggleSection}
+              onVideoSelect={handleVideoSelect}
+              onCompleteLesson={handleCompleteLesson}
+              onOpenResourcesToggle={(vidId) => setOpenResourcesId(openResourcesId === vidId ? null : vidId)}
+              getResourcesForVideo={getResourcesForVideo}
+              showToast={showToast}
+              onClosePlayer={() => router.push("/dashboard/my-learning")}
+            />
+          </div>
         )}
 
       </div>

@@ -94,8 +94,12 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
 
           {/* Brand Logo */}
           <div className="flex items-center gap-3">
-            <Link href="/" className="font-poppins font-semibold text-2xl text-white tracking-wide hover:opacity-85 transition-opacity">
-              StartByte
+            <Link href="/" className="hover:opacity-85 transition-opacity">
+              <img 
+                src="/icons/png/icon-horizontal-dark.png" 
+                alt="ByteStart Logo" 
+                className="h-8 w-auto object-contain"
+              />
             </Link>
           </div>
 
@@ -155,7 +159,7 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
             </Link>
 
             {/* Contextual Action Button or Profile Dropdown */}
-            {currentRole === "student" ? (
+            {currentRole !== "public" ? (
               <div className="relative" ref={profileDropdownRef}>
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
@@ -182,13 +186,26 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
 
                     {/* Blok 2: Core Learning & Cart Links */}
                     <div className="py-1.5 flex flex-col">
-                      <Link
-                        href="/dashboard/my-learning"
-                        onClick={() => setProfileDropdownOpen(false)}
-                        className="py-2 px-4 text-xs font-semibold text-slate-300 hover:text-[#DDA5FF] hover:bg-white/[0.03] transition-all flex items-center justify-between cursor-pointer"
-                      >
-                        <span>My learning</span>
-                      </Link>
+                      {currentRole === "student" ? (
+                        <Link
+                          href="/dashboard/my-learning"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="py-2 px-4 text-xs font-semibold text-slate-300 hover:text-[#DDA5FF] hover:bg-white/[0.03] transition-all flex items-center justify-between cursor-pointer"
+                        >
+                          <span>My learning</span>
+                        </Link>
+                      ) : (
+                        <Link
+                          href={dashboardPath}
+                          onClick={() => {
+                            setProfileDropdownOpen(false);
+                            onShowToast(`Mengalihkan ke ${activeRoleName} Dashboard di rute ${dashboardPath}`, "info");
+                          }}
+                          className="py-2 px-4 text-xs font-semibold text-slate-300 hover:text-[#DDA5FF] hover:bg-white/[0.03] transition-all flex items-center justify-between cursor-pointer"
+                        >
+                          <span>Dashboard</span>
+                        </Link>
+                      )}
                       <Link
                         href="/cart"
                         onClick={() => setProfileDropdownOpen(false)}
@@ -210,15 +227,28 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
                       >
                         <span>Wishlist</span>
                       </Link>
-                      <button
-                        onClick={() => {
-                          setProfileDropdownOpen(false);
-                          handleRoleSelect("owner", "Course Owner");
-                        }}
-                        className="w-full text-left py-2 px-4 text-xs font-semibold text-slate-300 hover:text-[#DDA5FF] hover:bg-white/[0.03] transition-all flex items-center justify-between cursor-pointer bg-transparent border-none outline-none"
-                      >
-                        <span>Teach on ByteStart</span>
-                      </button>
+                      {currentRole === "student" && (
+                        <button
+                          onClick={() => {
+                            setProfileDropdownOpen(false);
+                            handleRoleSelect("owner", "Course Owner");
+                          }}
+                          className="w-full text-left py-2 px-4 text-xs font-semibold text-slate-300 hover:text-[#DDA5FF] hover:bg-white/[0.03] transition-all flex items-center justify-between cursor-pointer bg-transparent border-none outline-none"
+                        >
+                          <span>Teach on ByteStart</span>
+                        </button>
+                      )}
+                      {currentRole === "owner" && (
+                        <button
+                          onClick={() => {
+                            setProfileDropdownOpen(false);
+                            handleRoleSelect("student", "Student");
+                          }}
+                          className="w-full text-left py-2 px-4 text-xs font-semibold text-slate-300 hover:text-[#DDA5FF] hover:bg-white/[0.03] transition-all flex items-center justify-between cursor-pointer bg-transparent border-none outline-none"
+                        >
+                          <span>Learn on ByteStart</span>
+                        </button>
+                      )}
                     </div>
 
                     {/* Blok 3: Communications & Alerts */}
@@ -299,7 +329,7 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
                   </div>
                 )}
               </div>
-            ) : currentRole === "public" ? (
+            ) : (
               <div className="flex items-center gap-3">
                 <Link
                   href="https://true-series-379734.framer.app/login"
@@ -314,22 +344,6 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
                   Sign Up
                 </Link>
               </div>
-            ) : (
-              <>
-                <Link
-                  href={dashboardPath}
-                  onClick={() => {
-                    // Dropdown otomatis menutup saat link diklik
-                    setProfileDropdownOpen(false);
-                    // Tetap memicu toast simulasi jika Anda membutuhkannya untuk demo tugas
-                    onShowToast(`Mengalihkan ke ${activeRoleName} Dashboard di rute ${dashboardPath}`, "info");
-                  }}
-                  className="bg-[#A156E3] hover:bg-[#8e45cf] text-white text-xs font-semibold px-4 py-2 rounded-full transition-all flex items-center gap-1.5 cursor-pointer shadow-lg shadow-[#A156E3]/20"
-                >
-                  <Sparkles className="size-3.5" />
-                  <span>Dashboard</span>
-                </Link>
-              </>
             )}
           </div>
 
@@ -355,6 +369,21 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
         <div className="fixed top-[77px] left-4 right-4 bg-[#14061c]/95 border border-white/10 rounded-2xl p-6 flex flex-col gap-5 z-40 backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-300 md:hidden">
+          {/* User Profile Header in Mobile Drawer (Only for Authenticated Users) */}
+          {currentRole !== "public" && (
+            <div className="flex items-center gap-4 pb-4 border-b border-white/10">
+              <div className="size-12 rounded-full bg-gradient-to-br from-[#A156E3] to-[#892CDC] text-white font-poppins font-bold text-sm flex items-center justify-center border border-white/20 shrink-0 relative">
+                LA
+                {/* Status Dot */}
+                <span className="absolute bottom-0 right-0 size-3 rounded-full bg-[#FAEB92] border-2 border-slate-950 animate-pulse" />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-base font-bold text-white leading-tight truncate">Luthfi Alan</h4>
+                <p className="text-xs text-slate-400 truncate mt-0.5 font-mono">alanperdana08@gmail.com</p>
+              </div>
+            </div>
+          )}
+
           <Link href="/" onClick={() => setMobileMenuOpen(false)} className={`text-lg py-2 border-b border-white/5 transition-colors ${isHomeActive ? "text-[#A156E3] font-semibold" : "hover:text-[#A156E3]"}`}>Home</Link>
           <Link href="/courses" onClick={() => setMobileMenuOpen(false)} className={`text-lg py-2 border-b border-white/5 transition-colors ${isCatalogActive ? "text-[#A156E3] font-semibold" : "hover:text-[#A156E3]"}`}>Courses</Link>
           <Link href="/articles" onClick={() => setMobileMenuOpen(false)} className={`text-lg py-2 border-b border-white/5 transition-colors ${isArticlesActive ? "text-[#A156E3] font-semibold" : "hover:text-[#A156E3]"}`}>Articles</Link>
@@ -395,15 +424,13 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
                 <Link
                   href={dashboardPath}
                   onClick={() => {
-                    // Dropdown otomatis menutup saat link diklik
-                    setProfileDropdownOpen(false);
-                    // Tetap memicu toast simulasi jika Anda membutuhkannya untuk demo tugas
+                    setMobileMenuOpen(false);
                     onShowToast(`Mengalihkan ke ${activeRoleName} Dashboard di rute ${dashboardPath}`, "info");
                   }}
-                  className="bg-[#A156E3] hover:bg-[#8e45cf] text-white text-xs font-semibold px-4 py-2 rounded-full transition-all flex items-center gap-1.5 cursor-pointer shadow-lg shadow-[#A156E3]/20"
+                  className="w-full h-11 justify-center rounded-xl bg-[#A156E3] hover:bg-[#8e45cf] text-white text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer shadow-lg shadow-[#A156E3]/20"
                 >
                   <Sparkles className="size-3.5" />
-                  <span>Dashboard</span>
+                  <span>{currentRole === "student" ? "My Learning" : "Dashboard"}</span>
                 </Link>
             ) : (
               <div className="flex gap-3">

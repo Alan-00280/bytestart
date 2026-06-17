@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Play, Pause, Volume2, VolumeX, Settings, Maximize2, Minimize2, Sparkles, ArrowLeft } from "lucide-react";
 import { Course } from "@/data/coursesMock";
@@ -65,13 +65,40 @@ export function VideoPlayer({
   onFullscreenToggle,
   showToast,
 }: VideoPlayerProps) {
+  const [isMobilePortrait, setIsMobilePortrait] = useState(false);
+
+  useEffect(() => {
+    const checkOrientation = () => {
+      setIsMobilePortrait(
+        window.innerWidth < 1024 && window.innerHeight > window.innerWidth
+      );
+    };
+    checkOrientation();
+    window.addEventListener("resize", checkOrientation);
+    return () => window.removeEventListener("resize", checkOrientation);
+  }, []);
+
   return (
     <div
       className={`w-full aspect-video bg-black relative flex flex-col justify-between overflow-hidden group select-none shrink-0 border border-slate-800 rounded-2xl ${
         isFullscreen
-          ? "fixed inset-0 w-screen h-screen z-[999] aspect-auto"
+          ? isMobilePortrait
+            ? "fixed z-[999] aspect-auto"
+            : "fixed inset-0 w-screen h-screen z-[999] aspect-auto"
           : "sticky top-[76px] lg:relative lg:top-0 z-30"
       }`}
+      style={
+        isFullscreen && isMobilePortrait
+          ? {
+              transform: "translate(-50%, -50%) rotate(90deg)",
+              width: "100vh",
+              height: "100vw",
+              top: "50%",
+              left: "50%",
+              position: "fixed",
+            }
+          : undefined
+      }
     >
       {/* Mock Video Canvas background */}
       <div className="absolute inset-0 flex items-center justify-center bg-radial from-slate-900 via-neutral-950 to-black overflow-hidden pointer-events-none">

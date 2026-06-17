@@ -38,7 +38,20 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ByteStart Platform",
   description: "High-Performance Learning Dashboard",
+  icons: {
+    icon: [
+      {
+        url: "/icons/ico/icon-light.ico",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/icons/ico/icon-dark.ico",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
+  },
 };
+
 
 export default async function RootLayout({
   children,
