@@ -22,6 +22,7 @@ import { Navbar } from "@/components/layouts/Navbar";
 import { Footer } from "@/components/layouts/Footer";
 import { Toast, ToastMessage } from "@/components/common/Toast";
 import { articlesData, Article } from "@/data/articlesMock";
+import { usePreferencesStore } from "@/stores/preferences/preferences-provider";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -33,7 +34,8 @@ export default function ArticleDetail({ params }: PageProps) {
   const router = useRouter();
 
   // States
-  const [currentRole, setCurrentRole] = useState("public");
+  const currentRole = usePreferencesStore((s) => s.currentRole);
+  const setCurrentRole = usePreferencesStore((s) => s.setCurrentRole);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);

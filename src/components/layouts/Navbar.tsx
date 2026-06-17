@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserCheck, ChevronDown, Check, ShoppingCart, Sparkles, Menu, X, Globe } from "lucide-react";
 import { roles } from "@/data/coursesMock";
+import { usePreferencesStore } from "@/stores/preferences/preferences-provider";
 
 interface NavbarProps {
   currentRole: string;
@@ -56,7 +57,7 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
     // Set up listeners to update count dynamically when cart is modified
     window.addEventListener("storage", checkCartCount);
     window.addEventListener("focus", checkCartCount);
-    
+
     // Custom event listener for updates within the same window
     window.addEventListener("bytestart_cart_updated", checkCartCount);
 
@@ -67,8 +68,11 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
     };
   }, []);
 
+  const setCurrentRoleStore = usePreferencesStore((s) => s.setCurrentRole);
+
   const handleRoleSelect = (roleId: string, roleName: string) => {
     onRoleChange(roleId, roleName);
+    setCurrentRoleStore(roleId);
     setRoleDropdownOpen(false);
   };
 
@@ -79,11 +83,15 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
   const activeRoleName = roles.find((r) => r.id === currentRole)?.name || "Calon Pelanggan";
   const activeRoleBadge = roles.find((r) => r.id === currentRole)?.badgeColor || "bg-gray-500/20 text-gray-300";
 
+  let dashboardPath = "/dashboard/my-learning";
+  if (currentRole === "admin") dashboardPath = "/dashboard";
+  if (currentRole === "owner") dashboardPath = "/dashboard";
+
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-black/80 backdrop-blur-md h-[76px] transition-all">
+      <header className="sticky top-0 z-50 w-full border-b border-x border-white/10 bg-black/75 backdrop-blur-md h-[76px] rounded-b-3xl transition-all shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
         <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          
+
           {/* Brand Logo */}
           <div className="flex items-center gap-3">
             <Link href="/" className="font-poppins font-semibold text-2xl text-white tracking-wide hover:opacity-85 transition-opacity">
@@ -100,7 +108,7 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
 
           {/* Action Buttons & Role Switcher */}
           <div className="hidden md:flex items-center gap-4">
-            
+
             {/* Simulasi Role Dropdown */}
             <div className="relative">
               <button
@@ -121,11 +129,10 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
                     <button
                       key={r.id}
                       onClick={() => handleRoleSelect(r.id, r.name)}
-                      className={`w-full text-left px-3 py-2 text-xs rounded-xl flex items-center justify-between cursor-pointer transition-colors ${
-                        currentRole === r.id
+                      className={`w-full text-left px-3 py-2 text-xs rounded-xl flex items-center justify-between cursor-pointer transition-colors ${currentRole === r.id
                           ? "bg-[#A156E3]/20 text-white font-medium"
                           : "hover:bg-white/5 text-white/80"
-                      }`}
+                        }`}
                     >
                       <span>{r.name}</span>
                       {currentRole === r.id && <Check className="size-3 text-[#A156E3]" />}
@@ -308,18 +315,21 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
                 </Link>
               </div>
             ) : (
-              <button
-                onClick={() => {
-                  let path = "/dashboard/my-learning";
-                  if (currentRole === "admin") path = "/dashboard/admin";
-                  if (currentRole === "owner") path = "/dashboard/owner";
-                  onShowToast(`Mengalihkan ke ${activeRoleName} Dashboard di rute ${path} (Simulasi)`, "info");
-                }}
-                className="bg-[#A156E3] hover:bg-[#8e45cf] text-white text-xs font-semibold px-4 py-2 rounded-full transition-all flex items-center gap-1.5 cursor-pointer shadow-lg shadow-[#A156E3]/20"
-              >
-                <Sparkles className="size-3.5" />
-                <span>Dashboard</span>
-              </button>
+              <>
+                <Link
+                  href={dashboardPath}
+                  onClick={() => {
+                    // Dropdown otomatis menutup saat link diklik
+                    setProfileDropdownOpen(false);
+                    // Tetap memicu toast simulasi jika Anda membutuhkannya untuk demo tugas
+                    onShowToast(`Mengalihkan ke ${activeRoleName} Dashboard di rute ${dashboardPath}`, "info");
+                  }}
+                  className="bg-[#A156E3] hover:bg-[#8e45cf] text-white text-xs font-semibold px-4 py-2 rounded-full transition-all flex items-center gap-1.5 cursor-pointer shadow-lg shadow-[#A156E3]/20"
+                >
+                  <Sparkles className="size-3.5" />
+                  <span>Dashboard</span>
+                </Link>
+              </>
             )}
           </div>
 
@@ -348,7 +358,7 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
           <Link href="/" onClick={() => setMobileMenuOpen(false)} className={`text-lg py-2 border-b border-white/5 transition-colors ${isHomeActive ? "text-[#A156E3] font-semibold" : "hover:text-[#A156E3]"}`}>Home</Link>
           <Link href="/courses" onClick={() => setMobileMenuOpen(false)} className={`text-lg py-2 border-b border-white/5 transition-colors ${isCatalogActive ? "text-[#A156E3] font-semibold" : "hover:text-[#A156E3]"}`}>Courses</Link>
           <Link href="/articles" onClick={() => setMobileMenuOpen(false)} className={`text-lg py-2 border-b border-white/5 transition-colors ${isArticlesActive ? "text-[#A156E3] font-semibold" : "hover:text-[#A156E3]"}`}>Articles</Link>
-          
+
           {/* Mobile Role Switcher List */}
           <div className="py-2 border-b border-white/5">
             <span className="block text-xs uppercase font-bold text-white/40 mb-2.5 tracking-wider">Simulasi Role</span>
@@ -360,11 +370,10 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
                     onRoleChange(r.id, r.name);
                     setMobileMenuOpen(false);
                   }}
-                  className={`text-[11px] font-semibold p-2 rounded-lg border text-center transition-all cursor-pointer ${
-                    currentRole === r.id
+                  className={`text-[11px] font-semibold p-2 rounded-lg border text-center transition-all cursor-pointer ${currentRole === r.id
                       ? "bg-[#A156E3] text-white border-[#A156E3]"
                       : "bg-white/5 border-white/10 text-white/80 hover:bg-white/10"
-                  }`}
+                    }`}
                 >
                   {r.name}
                 </button>
@@ -381,21 +390,21 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
               <ShoppingCart className="size-4 text-white" />
               <span className="text-sm">Keranjang</span>
             </Link>
-            
+
             {currentRole !== "public" ? (
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  let path = "/dashboard/my-learning";
-                  if (currentRole === "admin") path = "/dashboard/admin";
-                  if (currentRole === "owner") path = "/dashboard/owner";
-                  onShowToast(`Mengalihkan ke ${activeRoleName} Dashboard di rute ${path} (Simulasi)`, "info");
-                }}
-                className="w-full h-11 justify-center rounded-xl bg-[#A156E3] text-white flex items-center gap-2 cursor-pointer font-semibold text-sm"
-              >
-                <Sparkles className="size-4" />
-                <span>Dashboard</span>
-              </button>
+                <Link
+                  href={dashboardPath}
+                  onClick={() => {
+                    // Dropdown otomatis menutup saat link diklik
+                    setProfileDropdownOpen(false);
+                    // Tetap memicu toast simulasi jika Anda membutuhkannya untuk demo tugas
+                    onShowToast(`Mengalihkan ke ${activeRoleName} Dashboard di rute ${dashboardPath}`, "info");
+                  }}
+                  className="bg-[#A156E3] hover:bg-[#8e45cf] text-white text-xs font-semibold px-4 py-2 rounded-full transition-all flex items-center gap-1.5 cursor-pointer shadow-lg shadow-[#A156E3]/20"
+                >
+                  <Sparkles className="size-3.5" />
+                  <span>Dashboard</span>
+                </Link>
             ) : (
               <div className="flex gap-3">
                 <Link

@@ -8,12 +8,14 @@ import { Navbar } from "@/components/layouts/Navbar";
 import { Footer } from "@/components/layouts/Footer";
 import { Toast, ToastMessage } from "@/components/common/Toast";
 import { articlesData, articleCategories, ebooksWebinarsData } from "@/data/articlesMock";
+import { usePreferencesStore } from "@/stores/preferences/preferences-provider";
 
 export default function ArticlesPage() {
   const router = useRouter();
   
   // Navigation & Role states (synchronized with other pages)
-  const [currentRole, setCurrentRole] = useState("public");
+  const currentRole = usePreferencesStore((s) => s.currentRole);
+  const setCurrentRole = usePreferencesStore((s) => s.setCurrentRole);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   // Search & Filter States

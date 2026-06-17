@@ -24,6 +24,7 @@ import { Toast, ToastMessage } from "@/components/common/Toast";
 import { CourseCard } from "@/components/courses/CourseCard";
 import { Footer } from "@/components/layouts/Footer";
 import { coursesData, Course } from "@/data/coursesMock";
+import { usePreferencesStore } from "@/stores/preferences/preferences-provider";
 
 export default function ShoppingCartPage() {
   const router = useRouter();
@@ -41,7 +42,8 @@ export default function ShoppingCartPage() {
   const [wishlistIds, setWishlistIds] = useState<number[]>([]);
 
   // Navigation & Role states
-  const [currentRole, setCurrentRole] = useState("public");
+  const currentRole = usePreferencesStore((s) => s.currentRole);
+  const setCurrentRole = usePreferencesStore((s) => s.setCurrentRole);
 
   // Toast notifications state
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -63,12 +65,6 @@ export default function ShoppingCartPage() {
   // Initialize data on mount
   useEffect(() => {
     setMounted(true);
-
-    // Get role from localStorage if available
-    const savedRole = localStorage.getItem("bytestart_role");
-    if (savedRole) {
-      setCurrentRole(savedRole);
-    }
 
     // Initialize cart from localStorage, or populate with defaults [1, 2, 3] if empty
     const savedCart = localStorage.getItem("bytestart_cart");
@@ -114,7 +110,6 @@ export default function ShoppingCartPage() {
   // Handle role change
   const handleRoleChange = (roleId: string, roleName: string) => {
     setCurrentRole(roleId);
-    localStorage.setItem("bytestart_role", roleId);
     showToast(`Role disimulasikan sebagai: ${roleName}`, "role");
   };
 
@@ -418,7 +413,7 @@ export default function ShoppingCartPage() {
                           <div className="text-lg font-bold text-white flex items-center justify-start sm:justify-end gap-1.5 leading-none">
                             {formatRupiah(course.price)}
                             {hasDiscount && (
-                              <Tag className="size-3.5 text-[#FAEB92] fill-[#FAEB92]/10" title="Diskon Aktif" />
+                              <Tag className="size-3.5 text-[#FAEB92] fill-[#FAEB92]/10" aria-label="Diskon Aktif" />
                             )}
                           </div>
                           {hasDiscount && (

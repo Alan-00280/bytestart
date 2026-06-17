@@ -18,6 +18,7 @@ import { Toast, ToastMessage } from "@/components/common/Toast";
 import { CourseCard } from "@/components/courses/CourseCard";
 import { Footer } from "@/components/layouts/Footer";
 import { coursesData, categories, levels, Course } from "@/data/coursesMock";
+import { usePreferencesStore } from "@/stores/preferences/preferences-provider";
 
 // Local Course Carousel component for sliding functionality
 interface CourseCarouselProps {
@@ -116,7 +117,8 @@ const recommendedTopics = [
 
 export default function CourseCatalog() {
   // Navigation & Role states
-  const [currentRole, setCurrentRole] = useState("public");
+  const currentRole = usePreferencesStore((s) => s.currentRole);
+  const setCurrentRole = usePreferencesStore((s) => s.setCurrentRole);
 
   // Filtering states
   const [searchQuery, setSearchQuery] = useState("");

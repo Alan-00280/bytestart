@@ -22,6 +22,7 @@ import { Navbar } from "@/components/layouts/Navbar";
 import { Toast, ToastMessage } from "@/components/common/Toast";
 import { Footer } from "@/components/layouts/Footer";
 import { coursesData, Course } from "@/data/coursesMock";
+import { usePreferencesStore } from "@/stores/preferences/preferences-provider";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -45,7 +46,8 @@ export default function CheckoutPage() {
   const [transactionDate, setTransactionDate] = useState("");
 
   // Navigation & Role states
-  const [currentRole, setCurrentRole] = useState("public");
+  const currentRole = usePreferencesStore((s) => s.currentRole);
+  const setCurrentRole = usePreferencesStore((s) => s.setCurrentRole);
 
   // Toast notifications state
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -67,12 +69,6 @@ export default function CheckoutPage() {
   // Load checkout information on mount
   useEffect(() => {
     setMounted(true);
-
-    // Get role from localStorage
-    const savedRole = localStorage.getItem("bytestart_role");
-    if (savedRole) {
-      setCurrentRole(savedRole);
-    }
 
     // Get cart items and final price
     const savedCart = localStorage.getItem("bytestart_cart");
@@ -141,7 +137,6 @@ export default function CheckoutPage() {
   // Handle role change
   const handleRoleChange = (roleId: string, roleName: string) => {
     setCurrentRole(roleId);
-    localStorage.setItem("bytestart_role", roleId);
     showToast(`Role disimulasikan sebagai: ${roleName}`, "role");
   };
 

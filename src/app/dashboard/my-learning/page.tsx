@@ -19,6 +19,7 @@ import { Navbar } from "@/components/layouts/Navbar";
 import { Toast, ToastMessage } from "@/components/common/Toast";
 import { Footer } from "@/components/layouts/Footer";
 import { coursesData, Course } from "@/data/coursesMock";
+import { usePreferencesStore } from "@/stores/preferences/preferences-provider";
 
 interface CourseProgress {
   id: number;
@@ -37,7 +38,8 @@ export default function MyLearningPage() {
   const [courseProgressList, setCourseProgressList] = useState<Record<number, CourseProgress>>({});
 
   // Navigation & Role states
-  const [currentRole, setCurrentRole] = useState("public");
+  const currentRole = usePreferencesStore((s) => s.currentRole);
+  const setCurrentRole = usePreferencesStore((s) => s.setCurrentRole);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   // Show toast utility
@@ -57,18 +59,12 @@ export default function MyLearningPage() {
   // Handle role change
   const handleRoleChange = (roleId: string, roleName: string) => {
     setCurrentRole(roleId);
-    localStorage.setItem("bytestart_role", roleId);
     showToast(`Role disimulasikan sebagai: ${roleName}`, "role");
   };
 
   // Load purchased courses and setup progress on mount
   useEffect(() => {
     setMounted(true);
-
-    const savedRole = localStorage.getItem("bytestart_role");
-    if (savedRole) {
-      setCurrentRole(savedRole);
-    }
 
     // Get purchased courses IDs
     const savedPurchased = localStorage.getItem("bytestart_purchased_courses");
