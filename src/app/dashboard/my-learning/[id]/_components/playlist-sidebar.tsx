@@ -53,7 +53,7 @@ export function PlaylistSidebar({
   return (
     <div
       data-lenis-prevent
-      className="w-full lg:w-[30%] lg:h-[calc(100vh-76px)] lg:overflow-y-auto border-t lg:border-t-0 lg:border-l border-slate-900 bg-slate-950 flex flex-col no-scrollbar z-20"
+      className="w-full lg:h-[calc(100vh-76px)] lg:overflow-y-auto border-t lg:border-t-0 lg:border-l border-slate-900 bg-slate-950 flex flex-col no-scrollbar z-20"
     >
       {/* Sidebar Header Area */}
       <div className="font-bold text-base text-white p-4 border-b border-slate-900 flex justify-between items-center shrink-0 bg-slate-950/40">

@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn, getInitials } from "@/lib/utils";
+import Link from "next/link";
 
 export function AccountSwitcher({
   users,
@@ -86,7 +87,7 @@ export function AccountSwitcher({
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <LogOut />
-          Log out
+          <Link href="/" scroll={false} className="inline-flex w-100">Log out</Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

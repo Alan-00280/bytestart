@@ -14,9 +14,11 @@ export function Header() {
       <div className="sticky top-0 z-50 w-full max-w-[1290px] mx-auto px-4 md:px-0 py-6 h-auto flex items-start">
         <header className="backdrop-blur-xl bg-[rgba(62,5,113,0.18)] border border-white/[0.08] rounded-[58px] px-6 md:px-[50px] py-[10px] flex items-center justify-between w-full h-[79px] gap-[20px] shadow-[0px_8px_32px_rgba(0,0,0,0.35)]">
           <div className="flex items-center gap-3">
-            <span className="font-poppins font-semibold text-2xl md:text-3xl text-white tracking-wide text-shadow-[0px_1px_4px_rgba(0,0,0,0.39)]">
-              ByteStart
-            </span>
+            <img 
+              src="/icons/png/icon-horizontal-dark.png" 
+              alt="ByteStart Logo" 
+              className="h-8 md:h-[35px] w-auto object-contain"
+            />
           </div>
 
           {/* Desktop Navigation */}
@@ -24,7 +26,7 @@ export function Header() {
             <a href="#about" className="hover:text-[#A156E3] transition-colors">About Us</a>
             <a href="#benefits" className="hover:text-[#A156E3] transition-colors">Benefit</a>
             <a href="/articles" className="hover:text-[#A156E3] transition-colors">Article</a>
-            <Link href="/courses" scroll={false} className="hover:text-[#A156E3] transition-colors">Explore</Link>
+            <Link href="/courses" scroll={false} className="hover:text-[#A156E3] transition-colors">Courses</Link>
           </nav>
 
           {/* Header Action Buttons */}
@@ -54,7 +56,7 @@ export function Header() {
           <a href="#about" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-[#A156E3] border-b border-white/5">About Us</a>
           <a href="#benefits" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-[#A156E3] border-b border-white/5">Benefit</a>
           <a href="/articles" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-[#A156E3] border-b border-white/5">Article</a>
-          <Link href="/courses" scroll={false} onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-[#A156E3] border-b border-white/5">Explore</Link>
+          <Link href="/courses" scroll={false} onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-[#A156E3] border-b border-white/5">Courses</Link>
           <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-[#A156E3]">FAQs</a>
           <div className="flex flex-col gap-3 pt-4 border-t border-white/10">
             <ButtonGlass themeType="outline" className="w-full h-11 justify-center" icon={<ShoppingCart className="size-5" />} logoRight>

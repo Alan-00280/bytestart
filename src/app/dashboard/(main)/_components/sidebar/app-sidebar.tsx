@@ -179,7 +179,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link prefetch={false} href="/courses">
-                <Command />
+                <img 
+                  src="/icons/png/icon-dark.png" 
+                  alt="ByteStart" 
+                  className="size-6 dark:block hidden"
+                />
+                <img 
+                  src="/icons/png/icon-light.png" 
+                  alt="ByteStart" 
+                  className="size-6 dark:hidden block"
+                />
                 <span className="font-semibold text-base">{APP_CONFIG.name}</span>
               </Link>
             </SidebarMenuButton>
