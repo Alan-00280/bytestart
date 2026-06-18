@@ -23,7 +23,7 @@ import { Navbar } from "@/components/layouts/Navbar";
 import { Toast, ToastMessage } from "@/components/common/Toast";
 import { CourseCard } from "@/components/courses/CourseCard";
 import { Footer } from "@/components/layouts/Footer";
-import { coursesData, Course } from "@/data/coursesMock";
+import { coursesData, Course, ownersData } from "@/data/coursesMock";
 import { usePreferencesStore } from "@/stores/preferences/preferences-provider";
 
 export default function ShoppingCartPage() {
@@ -376,9 +376,9 @@ export default function ShoppingCartPage() {
                             {course.title}
                           </h3>
                         </Link>
-                        <p className="text-xs text-slate-400 mt-0.5 font-light">
-                          By ByteStart Team
-                        </p>
+                        <p className="text-[10px] text-white/40 mt-0.5">
+                        By {ownersData[course.ownerId]?.name || "ByteStart Team"}
+                      </p>
 
                         {/* Rating block */}
                         <div className="flex items-center gap-1.5 mt-1.5">

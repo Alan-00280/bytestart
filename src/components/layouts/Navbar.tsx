@@ -79,6 +79,7 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
   const isHomeActive = pathname === "/";
   const isCatalogActive = pathname.startsWith("/courses");
   const isArticlesActive = pathname.startsWith("/articles");
+  const isMyLearningActive = pathname.startsWith("/dashboard/my-learning");
 
   const activeRoleName = roles.find((r) => r.id === currentRole)?.name || "Calon Pelanggan";
   const activeRoleBadge = roles.find((r) => r.id === currentRole)?.badgeColor || "bg-gray-500/20 text-gray-300";
@@ -108,6 +109,9 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
             <Link href="/" className={`transition-colors ${isHomeActive ? "text-[#A156E3] font-medium" : "hover:text-[#A156E3] text-white/80"}`}>Home</Link>
             <Link href="/courses" className={`transition-colors ${isCatalogActive ? "text-[#A156E3] font-medium" : "hover:text-[#A156E3] text-white/80"}`}>Courses</Link>
             <Link href="/articles" className={`transition-colors ${isArticlesActive ? "text-[#A156E3] font-medium" : "hover:text-[#A156E3] text-white/80"}`}>Articles</Link>
+            {currentRole === "student" && (
+              <Link href="/dashboard/my-learning" className={`transition-colors ${isMyLearningActive ? "text-[#A156E3] font-medium" : "hover:text-[#A156E3] text-white/80"}`}>My Learning</Link>
+            )}
           </nav>
 
           {/* Action Buttons & Role Switcher */}
@@ -159,6 +163,7 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
             </Link>
 
             {/* Contextual Action Button or Profile Dropdown */}
+
             {currentRole !== "public" ? (
               <div className="relative" ref={profileDropdownRef}>
                 <button
@@ -387,6 +392,9 @@ export function Navbar({ currentRole, onRoleChange, onShowToast }: NavbarProps) 
           <Link href="/" onClick={() => setMobileMenuOpen(false)} className={`text-lg py-2 border-b border-white/5 transition-colors ${isHomeActive ? "text-[#A156E3] font-semibold" : "hover:text-[#A156E3]"}`}>Home</Link>
           <Link href="/courses" onClick={() => setMobileMenuOpen(false)} className={`text-lg py-2 border-b border-white/5 transition-colors ${isCatalogActive ? "text-[#A156E3] font-semibold" : "hover:text-[#A156E3]"}`}>Courses</Link>
           <Link href="/articles" onClick={() => setMobileMenuOpen(false)} className={`text-lg py-2 border-b border-white/5 transition-colors ${isArticlesActive ? "text-[#A156E3] font-semibold" : "hover:text-[#A156E3]"}`}>Articles</Link>
+          {currentRole === "student" && (
+            <Link href="/dashboard/my-learning" onClick={() => setMobileMenuOpen(false)} className={`text-lg py-2 border-b border-white/5 transition-colors ${isMyLearningActive ? "text-[#A156E3] font-semibold" : "hover:text-[#A156E3]"}`}>My Learning</Link>
+          )}
 
           {/* Mobile Role Switcher List */}
           <div className="py-2 border-b border-white/5">

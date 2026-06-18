@@ -43,7 +43,8 @@ export function StudentModal({
     } else {
       setName("");
       setEmail("");
-      setCourse(coursesData[0]?.title || "");
+      const ownerCourses = coursesData.filter(c => c.ownerId === "owner-1");
+      setCourse(ownerCourses[0]?.title || "");
       setProgress(0);
       setStatus("Active");
     }
@@ -119,7 +120,7 @@ export function StudentModal({
               onChange={(e) => setCourse(e.target.value)}
               className="w-full bg-slate-950 border border-white/10 rounded-xl h-10 px-3 text-xs text-white outline-none focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/35 transition-all"
             >
-              {coursesData.map((c) => (
+              {coursesData.filter(c => c.ownerId === "owner-1").map((c) => (
                 <option key={c.id} value={c.title} className="bg-slate-950 text-white">
                   {c.title}
                 </option>

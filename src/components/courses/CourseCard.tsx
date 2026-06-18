@@ -4,7 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { Star, Clock, BookOpen, ShoppingCart } from "lucide-react";
 import { ButtonGlass } from "@/components/ui/button-glass";
-import { Course } from "@/data/coursesMock";
+import { Course, ownersData } from "@/data/coursesMock";
 
 interface CourseCardProps {
   course: Course;
@@ -70,15 +70,14 @@ export function CourseCard({ course, onShowToast }: CourseCardProps) {
       {/* 2. DETAILS WRAPPER */}
       {/* Takes remaining horizontal space in mobile, and structures vertically */}
       <div className="flex flex-col flex-grow justify-between lg:justify-start lg:gap-3.5 min-w-0">
-        
         {/* Title & Instructor */}
         <div>
           <h3 className="font-poppins font-semibold text-xs sm:text-sm lg:text-base text-slate-100 lg:text-white leading-snug line-clamp-2 lg:group-hover:text-[#DDA5FF] transition-colors">
             {course.title}
           </h3>
-          {/* Instructor (Mobile Only) */}
-          <span className="block lg:hidden text-[9px] sm:text-[10px] text-white/40 mt-0.5">
-            ByteStart Team
+          {/* Instructor (Displayed on both Desktop & Mobile) */}
+          <span className="block text-[10px] text-white/40 mt-1">
+            Oleh {ownersData[course.ownerId]?.name || "ByteStart Team"}
           </span>
         </div>
 

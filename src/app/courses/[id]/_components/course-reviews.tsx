@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Star, Award, Users } from "lucide-react";
-import { Course } from "@/data/coursesMock";
+import { Course, ownersData } from "@/data/coursesMock";
 
 interface ReviewItem {
   initials: string;
@@ -31,6 +31,15 @@ export function CourseReviews({
   onCourseClick,
   showToast,
 }: CourseReviewsProps) {
+  const owner = ownersData[course.ownerId] || {
+    id: "default",
+    name: "ByteStart Team",
+    email: "team@bytestart.edu",
+    avatar: "BS",
+    title: "Pusat Pendidikan Pemrograman Terpadu",
+    bio: "ByteStart adalah tim insinyur perangkat lunak senior, perancang UI/UX berpengalaman, dan pendidik teknologi yang berdedikasi tinggi untuk memberikan materi pembelajaran pemrograman terbaik, modular, praktis, dan siap industri."
+  };
+
   return (
     <>
       {/* Section 6: Rekomendasi "Students also bought" */}
@@ -200,11 +209,11 @@ export function CourseReviews({
         <h2 className="text-lg sm:text-xl font-bold mb-4">Pengajar / Instruktur</h2>
         <div className="flex flex-col sm:flex-row gap-5 items-center sm:items-start text-center sm:text-left bg-white/[0.01] border border-white/5 rounded-2xl p-5">
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#A156E3] to-[#892CDC] flex items-center justify-center text-xl font-bold border-2 border-white/10 shrink-0 select-none">
-            BS
+            {owner.avatar}
           </div>
           <div>
-            <h3 className="text-base font-bold text-white mb-0.5">ByteStart Team</h3>
-            <p className="text-xs text-[#DDA5FF] font-medium mb-3">Pusat Pendidikan Pemrograman Terpadu</p>
+            <h3 className="text-base font-bold text-white mb-0.5">{owner.name}</h3>
+            <p className="text-xs text-[#DDA5FF] font-medium mb-3">{owner.title}</p>
             <div className="flex flex-wrap justify-center sm:justify-start gap-x-4 gap-y-1.5 text-xs text-white/50 mb-3.5 font-medium">
               <div className="flex items-center gap-1">
                 <Star className="size-3 text-[#FAEB92] fill-[#FAEB92]" />
@@ -220,8 +229,7 @@ export function CourseReviews({
               </div>
             </div>
             <p className="text-xs sm:text-sm text-white/60 leading-relaxed font-light">
-              ByteStart adalah tim insinyur perangkat lunak senior, perancang UI/UX berpengalaman, dan pendidik teknologi
-              yang berdedikasi tinggi untuk memberikan materi pembelajaran pemrograman terbaik, modular, praktis, dan siap industri.
+              {owner.bio}
             </p>
           </div>
         </div>

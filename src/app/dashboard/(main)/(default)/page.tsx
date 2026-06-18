@@ -28,9 +28,26 @@ export default function Page() {
   useEffect(() => {
     if (currentRole === "owner") {
       const saved = localStorage.getItem("bytestart_owner_courses");
-      let list = coursesData;
+      let list = coursesData.filter(c => c.ownerId === "owner-1");
       if (saved) {
-        try { list = JSON.parse(saved); } catch (e) {}
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            // Normalize old courses by adding ownerId from coursesMock if missing
+            const normalized = parsed.map((c: any) => {
+              if (!c.ownerId) {
+                const original = coursesData.find(o => o.id === c.id);
+                return { ...c, ownerId: original ? original.ownerId : "owner-1" };
+              }
+              return c;
+            });
+            
+            // Save normalized courses back to localStorage to heal the store
+            localStorage.setItem("bytestart_owner_courses", JSON.stringify(normalized));
+            
+            list = normalized.filter((c: any) => c.ownerId === "owner-1");
+          }
+        } catch (e) {}
       }
       setCoursesCount(list.length);
       setStudentsCount(list.reduce((acc, c) => acc + (c.reviewsCount * 12), 0));
