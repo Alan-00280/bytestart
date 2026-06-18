@@ -91,6 +91,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 url: "/dashboard",
                 icon: LayoutDashboard,
               },
+              {
+                title: "Transactions",
+                url: "/dashboard/transactions",
+                icon: ClipboardList,
+              },
               ...filtered,
             ],
           };
@@ -141,6 +146,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 title: "My Article",
                 url: "/dashboard/my-articles",
                 icon: BookOpen,
+              },
+              {
+                title: "Transactions",
+                url: "/dashboard/transactions",
+                icon: ClipboardList,
               },
               // ...filtered,
             ],

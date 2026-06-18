@@ -21,7 +21,7 @@ import {
 import { Navbar } from "@/components/layouts/Navbar";
 import { Toast, ToastMessage } from "@/components/common/Toast";
 import { Footer } from "@/components/layouts/Footer";
-import { coursesData, Course } from "@/data/coursesMock";
+import { coursesData, Course, ownersData } from "@/data/coursesMock";
 import { usePreferencesStore } from "@/stores/preferences/preferences-provider";
 
 export default function CheckoutPage() {
@@ -552,7 +552,7 @@ export default function CheckoutPage() {
                           {course.title}
                         </h4>
                         <span className="text-[10px] text-slate-400 font-light">
-                          By ByteStart Team • {course.duration}
+                          By {ownersData[course.ownerId]?.name || "ByteStart Team"} • {course.duration}
                         </span>
                       </div>
                     </div>

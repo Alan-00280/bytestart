@@ -1,42 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { 
-  ArrowLeft, 
-  Save, 
-  Settings, 
-  FileText,
-  CheckCircle,
-} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { CheckCircle } from "lucide-react";
 import { Article, articlesData } from "@/data/articlesMock";
-
-// Import modular sub-components
 import { ArticleList } from "./_components/article-list";
-import { ArticleGeneralInfo } from "./_components/article-general-info";
-import { ArticleContentEditor, ArticleContentSection } from "./_components/article-content-editor";
 
 export default function MyArticlesPage() {
+  const router = useRouter();
   const [articles, setArticles] = useState<Article[]>([]);
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
-  
-  // Workspace Active Tab
-  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<"general" | "content">("general");
-
-  // General Form States
-  const [formTitle, setFormTitle] = useState("");
-  const [formCategory, setFormCategory] = useState("Engineering");
-  const [formAuthor, setFormAuthor] = useState("ByteStart Team");
-  const [formDate, setFormDate] = useState("");
-  const [formReadTime, setFormReadTime] = useState("");
-  const [formImage, setFormImage] = useState("");
-  const [formSummary, setFormSummary] = useState("");
-  const [formFeatured, setFormFeatured] = useState(false);
-  const [formPopular, setFormPopular] = useState(false);
-
-  // Content Sections States (4 headings & paragraphs)
-  const [sections, setSections] = useState<ArticleContentSection[]>([]);
-
-  // Alert/Feedback state
   const [alertMessage, setAlertMessage] = useState<{ text: string; type: "success" | "error" | "info" } | null>(null);
 
   // Load articles from local storage on mount
@@ -59,35 +31,9 @@ export default function MyArticlesPage() {
     setTimeout(() => setAlertMessage(null), 4500);
   };
 
-  // Edit Article Handler
+  // Edit Article Handler: redirect to slug editor
   const handleEditArticle = (article: Article) => {
-    setSelectedArticle(article);
-    setActiveWorkspaceTab("general");
-
-    // Load general info states
-    setFormTitle(article.title);
-    setFormCategory(article.category);
-    setFormAuthor(article.author);
-    setFormDate(article.date);
-    setFormReadTime(article.readTime);
-    setFormImage(article.image);
-    setFormSummary(article.summary);
-    setFormFeatured(!!article.featured);
-    setFormPopular(!!article.popular);
-
-    // Load content sections from local storage
-    const savedSections = localStorage.getItem(`bytestart_article_content_${article.id}`);
-    if (savedSections) {
-      try {
-        setSections(JSON.parse(savedSections));
-      } catch (e) {
-        setSections(generateDefaultSections(article.title));
-      }
-    } else {
-      const def = generateDefaultSections(article.title);
-      setSections(def);
-      localStorage.setItem(`bytestart_article_content_${article.id}`, JSON.stringify(def));
-    }
+    router.push(`/dashboard/my-articles/${article.id}`);
   };
 
   // Create Article Action
@@ -114,8 +60,7 @@ export default function MyArticlesPage() {
     const defaultSections = generateDefaultSections(newArticle.title);
     localStorage.setItem(`bytestart_article_content_${newArticle.id}`, JSON.stringify(defaultSections));
 
-    handleEditArticle(newArticle);
-    triggerAlert("Artikel baru berhasil dibuat! Silakan edit konten dan detailnya.", "success");
+    router.push(`/dashboard/my-articles/${newArticle.id}`);
   };
 
   // Delete Article Action
@@ -130,41 +75,6 @@ export default function MyArticlesPage() {
 
       triggerAlert(`Artikel "${title}" berhasil dihapus.`, "info");
     }
-  };
-
-  // Save changes action
-  const handleSaveChanges = () => {
-    if (!selectedArticle) return;
-
-    const updatedArticle: Article = {
-      ...selectedArticle,
-      title: formTitle,
-      category: formCategory,
-      author: formAuthor,
-      date: formDate,
-      readTime: formReadTime,
-      image: formImage,
-      summary: formSummary,
-      featured: formFeatured,
-      popular: formPopular,
-    };
-
-    const updatedList = articles.map((a) => (a.id === selectedArticle.id ? updatedArticle : a));
-    setArticles(updatedList);
-    localStorage.setItem("bytestart_owner_articles", JSON.stringify(updatedList));
-
-    // Save details content
-    localStorage.setItem(`bytestart_article_content_${selectedArticle.id}`, JSON.stringify(sections));
-
-    setSelectedArticle(null);
-    triggerAlert("Perubahan artikel berhasil disimpan!", "success");
-  };
-
-  // Update Section Handler
-  const handleUpdateSection = (index: number, field: keyof ArticleContentSection, value: string) => {
-    setSections((prev) =>
-      prev.map((sec, idx) => (idx === index ? { ...sec, [field]: value } : sec))
-    );
   };
 
   return (
@@ -185,117 +95,18 @@ export default function MyArticlesPage() {
         </div>
       )}
 
-      {/* Main Container */}
-      {!selectedArticle ? (
-        <ArticleList
-          articles={articles}
-          onCreateArticle={handleCreateArticle}
-          onEditArticle={handleEditArticle}
-          onDeleteArticle={handleDeleteArticle}
-        />
-      ) : (
-        <div className="flex flex-col gap-6 bg-slate-950/20 rounded-2xl border border-white/[0.06] p-6 backdrop-blur-xl">
-          {/* Workspace Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.05] pb-5">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setSelectedArticle(null)}
-                className="p-2 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 text-slate-300 transition-all cursor-pointer outline-none active:scale-95"
-              >
-                <ArrowLeft className="size-4" />
-              </button>
-              <div>
-                <span className="text-[9px] font-bold text-purple-400 uppercase tracking-widest leading-none">
-                  Article Editor Workspace
-                </span>
-                <h3 className="text-base font-black text-white truncate max-w-md sm:max-w-xl font-poppins mt-0.5">
-                  {formTitle || "New Publication Studio"}
-                </h3>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setSelectedArticle(null)}
-                className="px-4 py-2 border border-white/10 bg-transparent hover:bg-white/5 text-slate-300 text-xs font-bold rounded-xl transition-all cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveChanges}
-                className="flex items-center gap-1.5 px-4 py-2 bg-[#892CDC] hover:bg-[#A156E3] text-white text-xs font-extrabold rounded-xl shadow-lg shadow-purple-500/10 transition-all cursor-pointer border-none"
-              >
-                <Save className="size-3.5 stroke-[2.5]" />
-                <span>Save Workspace</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Sub Navigation Workspace Tabs */}
-          <div className="flex overflow-x-auto gap-4 border-b border-white/[0.05] pb-1.5 no-scrollbar">
-            {[
-              { id: "general", label: "General Settings", icon: Settings },
-              { id: "content", label: "Article Content Editor", icon: FileText },
-            ].map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeWorkspaceTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveWorkspaceTab(tab.id as any)}
-                  className={`flex items-center gap-1.5 pb-2 text-xs font-bold border-b-2 transition-all outline-none cursor-pointer whitespace-nowrap ${
-                    isActive
-                      ? "border-purple-500 text-purple-400 font-extrabold"
-                      : "border-transparent text-slate-400 hover:text-white"
-                  }`}
-                >
-                  <Icon className="size-3.5" />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Tab Panels */}
-          <div className="min-h-[400px]">
-            {activeWorkspaceTab === "general" && (
-              <ArticleGeneralInfo
-                formTitle={formTitle}
-                setFormTitle={setFormTitle}
-                formCategory={formCategory}
-                setFormCategory={setFormCategory}
-                formAuthor={formAuthor}
-                setFormAuthor={setFormAuthor}
-                formDate={formDate}
-                setFormDate={setFormDate}
-                formReadTime={formReadTime}
-                setFormReadTime={setFormReadTime}
-                formImage={formImage}
-                setFormImage={setFormImage}
-                formSummary={formSummary}
-                setFormSummary={setFormSummary}
-                formFeatured={formFeatured}
-                setFormFeatured={setFormFeatured}
-                formPopular={formPopular}
-                setFormPopular={setFormPopular}
-              />
-            )}
-
-            {activeWorkspaceTab === "content" && (
-              <ArticleContentEditor
-                sections={sections}
-                onUpdateSection={handleUpdateSection}
-              />
-            )}
-          </div>
-        </div>
-      )}
+      <ArticleList
+        articles={articles}
+        onCreateArticle={handleCreateArticle}
+        onEditArticle={handleEditArticle}
+        onDeleteArticle={handleDeleteArticle}
+      />
     </div>
   );
 }
 
 // Generate Default Content Sections matching public renderArticleContent layout
-function generateDefaultSections(title: string): ArticleContentSection[] {
+function generateDefaultSections(title: string) {
   let headings = [
     "Introduction & Core Fundamentals",
     "Key Concepts & Implementation Blueprint",

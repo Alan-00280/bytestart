@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { ChevronRight, Users, Calendar, Globe } from "lucide-react";
-import { Course } from "@/data/coursesMock";
+import { Course, ownersData } from "@/data/coursesMock";
 
 interface CourseHeroProps {
   course: Course;
@@ -63,7 +63,7 @@ export function CourseHero({
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-6 text-xs text-white/60 pt-4 border-t border-white/5">
             <div className="flex items-center gap-2">
               <Users className="size-4 text-[#A156E3]" />
-              <span>Dibuat oleh <span className="text-white font-medium">ByteStart Team</span></span>
+              <span>Dibuat oleh <span className="text-white font-medium">{ownersData[course.ownerId]?.name || "ByteStart Team"}</span></span>
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="size-4 text-[#A156E3]" />
