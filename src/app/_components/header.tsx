@@ -11,7 +11,7 @@ export function Header() {
   return (
     <>
       {/* Floating Header Wrapper (Matching Figma 71:231 & 71:232) */}
-      <div className="sticky top-0 z-50 w-full max-w-[1290px] mx-auto px-4 md:px-0 py-6 h-auto flex items-start">
+      <div className="sticky top-0 z-50 md:w-full lg:w-11/12 max-w-[1290px] mx-auto px-4 md:px-0 py-6 h-auto flex items-start">
         <header className="backdrop-blur-xl bg-[rgba(62,5,113,0.18)] border border-white/[0.08] rounded-[58px] px-6 md:px-[50px] py-[10px] flex items-center justify-between w-full h-[79px] gap-[20px] shadow-[0px_8px_32px_rgba(0,0,0,0.35)]">
           <div className="flex items-center gap-3">
             <img
